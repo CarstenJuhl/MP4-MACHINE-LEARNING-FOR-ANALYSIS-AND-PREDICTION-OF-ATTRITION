@@ -4,10 +4,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
-from sklearn import metrics
 from sklearn.metrics import silhouette_score
-from scipy.spatial.distance import cdist
 from sklearn.decomposition import PCA
+from sklearn.ensemble import RandomForestClassifier
 from yellowbrick.cluster import SilhouetteVisualizer
 
 X = DataHandling.processedData.copy()
@@ -111,3 +110,39 @@ visualizer.fit(X)
 
 # Show the visualizer
 visualizer.show()
+
+
+attrition_labels = DataHandling.processedData['Attrition']
+
+for i in range(optimalK):
+    cluster = X_pca[y == i]
+    plt.scatter(cluster[:, 0], cluster[:, 1], label=f'Cluster {i}', c=attrition_labels[y == i], cmap='viridis')
+
+plt.legend()
+plt.text(0.95, 0.05, 'People with attrition = yellow', verticalalignment='bottom', horizontalalignment='right',
+         transform=plt.gca().transAxes, bbox=dict(facecolor='white', alpha=0.7))
+plt.grid(True)
+plt.show()
+
+y = DataHandling.processedData['Attrition']
+X_features = DataHandling.processedData.drop('Attrition', axis=1)
+
+# Train a Random Forest classifier
+rf_model = RandomForestClassifier(n_estimators=100, random_state=0)
+rf_model.fit(X_features, y)
+
+# Display feature importance
+feature_importance = pd.Series(rf_model.feature_importances_, index=X_features.columns)
+feature_importance.sort_values(ascending=False, inplace=True)
+print("Feature Importance:")
+print(feature_importance.head())
+
+DataHandling.processedData['Cluster'] = clusterLabels
+
+# Group by cluster and calculate mean values
+cluster_means = DataHandling.processedData.groupby('Cluster').mean()
+
+# Display mean values for each cluster
+pd.set_option('display.max_columns', None)
+print("Mean Values for Each Cluster:")
+print(cluster_means)
