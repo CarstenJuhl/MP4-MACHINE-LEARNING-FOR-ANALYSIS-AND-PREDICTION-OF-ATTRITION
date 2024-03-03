@@ -11,6 +11,7 @@ import itertools
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import numpy as np
+import joblib
 
 data = readData.loadData('../Data/WA_Fn-UseC_-HR-Employee-Attrition.csv', 'csv')
 pd.set_option('display.float_format', lambda x: '%.3f' % x)
@@ -115,6 +116,8 @@ print(dTreeAccuracy)
 print(classification_report(y_test, dTreePredictions))
 print(naiveBayesAccuracy)
 print(classification_report(y_test, naiveBayesPredictions))
+
+joblib.dump(naiveBayes, '../model/nbmodel.pkl')
 
 def findBestFeatureCombinationForBestPossibleModelTraining(X, y, models):
     best_model = None
