@@ -23,4 +23,4 @@ processedData = processedData.drop([
 st.title("Unsupervised Training")
 st.sidebar.header("Unsupervised Training", divider='rainbow')
 
-st.write("In this section you can train a model using supervised training models.")
+st.write("In this section ")
